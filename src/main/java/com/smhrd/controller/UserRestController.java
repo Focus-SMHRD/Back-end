@@ -1,5 +1,7 @@
 package com.smhrd.controller;
 
+import java.util.Map;
+
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -8,32 +10,41 @@ import com.smhrd.repository.AlertRepository;
 import com.smhrd.repository.SensorRepository;
 import com.smhrd.repository.UserRepository;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("/focus/api/user")
 public class UserRestController {
     private UserRepository user_repo;
     private SensorRepository sensor_repo;
     private AlertRepository alert_repo;
 
+
+    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+    public void handleOptionsRequest() {
+        // OPTIONS 요청을 빈 응답으로 허용
+    }
+
     public UserRestController(UserRepository user_repo, SensorRepository sensor_repo, AlertRepository alert_repo) {
         this.user_repo = user_repo;
         this.sensor_repo = sensor_repo;
         this.alert_repo = alert_repo;
+        System.out.println("유저 컨트롤러 진입");
     }
 
     // 로그인
     @RequestMapping("/login")
     public User login(String email, String pw) {
-        User user = user_repo.login(email, pw);
+        User user = user_repo.loginUser(email, pw);
         return user;
     }
-
     // 회원가입
     @RequestMapping("/join")
-    public String join(User user) {
+    public String join(@RequestBody Map<String, String> formData) {
         try {
-            user_repo.save(user);
+            System.err.println(formData.get("email")+"입니다.");
+            user_repo.registerUser(formData.get("email"), formData.get("pw"), formData.get("firstName")+formData.get("lastName"));
             return "true"; // 저장 성공
         } catch (DataAccessException e) {
             e.printStackTrace();
@@ -43,9 +54,9 @@ public class UserRestController {
 
     // 회원정보수정
     @RequestMapping("/update")
-    public String update(User user) {
+    public String update(@RequestBody User user) {
         try {
-            user_repo.save(user);
+            user_repo.updateUser(user.getUser_email(), user.getUser_pw(), user.getUser_name());
             return "true"; // 업데이트 성공
         } catch (DataAccessException e) {
             e.printStackTrace();
@@ -56,9 +67,9 @@ public class UserRestController {
     // 회원탈퇴
     @RequestMapping("/delete")
     public String delete(String id) {
-        long sensorResult = sensor_repo.deleteByUser_email(id);
-        long alertResult = alert_repo.deleteByUser_email(id);
-        long userResult = user_repo.deleteByUser_email(id);
+        long sensorResult = sensor_repo.deleteSensor(id);
+        long alertResult = alert_repo.deleteAlert(id);
+        long userResult = user_repo.deleteUser(id);
 
         if (sensorResult == 0 && alertResult == 0 && userResult == 0) {
             return "false";

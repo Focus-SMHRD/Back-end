@@ -16,10 +16,6 @@ public class User {
 	private String user_pw;
 
 	private String user_name;
-	
-	private String user_birthdate;
-
-	private String user_region;
 
 	private String created_at;
 	

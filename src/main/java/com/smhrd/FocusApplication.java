@@ -1,4 +1,4 @@
-package com.smhrd.focus;
+package com.smhrd;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
