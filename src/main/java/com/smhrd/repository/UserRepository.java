@@ -44,9 +44,19 @@ public interface UserRepository extends JpaRepository<User, String> {
                    @Param("user_pw") String userPw,
                    @Param("user_name") String userName);
 
+	// 비밀번호 수정 (UPDATE)
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE tb_user SET user_pw = SHA2(:#{#user_pw}, 512) WHERE user_email = :user_email", nativeQuery = true)
+	int chagePassword(@Param("user_email") String userEmail,
+				   @Param("user_pw") String userPw);
     // 회원탈퇴 (DELETE)
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM tb_user WHERE user_email = :user_email", nativeQuery = true)
     int deleteUser(@Param("user_email") String userEmail);
+
+    // 아이디 중복체크 (SELECT)
+    @Query(value = "SELECT * FROM tb_user WHERE user_email = :user_email", nativeQuery = true)
+    User checkEmail(@Param("user_email") String userEmail);
 }

@@ -35,9 +35,19 @@ public class UserRestController {
 
     // 로그인
     @RequestMapping("/login")
-    public User login(String email, String pw) {
-        User user = user_repo.loginUser(email, pw);
-        return user;
+    public String login(@RequestBody Map<String, String> formData) {
+        try {
+            User result =  user_repo.loginUser(formData.get("email"), formData.get("pw"));
+            if(result == null){
+                return "false";
+            }
+            else{
+                return "true";
+            }
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     // 회원가입
     @RequestMapping("/join")
@@ -76,5 +86,22 @@ public class UserRestController {
         } else {
             return "true";
         }
+    }
+
+    // 이메일 중복체크
+    @RequestMapping("/check")
+    public String checkEmail(@RequestBody Map<String, String> formData) {
+        try {
+            User result = user_repo.checkEmail(formData.get("email"));
+            if( result == null){
+                return "false";
+            }
+            else{
+                return "true";
+            }
+        } catch (DataAccessException e) {
+                e.printStackTrace();
+        }
+        return null;
     }
 }
