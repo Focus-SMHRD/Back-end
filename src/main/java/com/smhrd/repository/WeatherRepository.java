@@ -28,7 +28,7 @@ public interface WeatherRepository extends JpaRepository<Weather, Integer> {
 	// private String created_at;
 
     // 날씨 데이터 가져오기 (SELECT)
-    @Query(value = "SELECT * FROM tb_weather ORDER BY wh_idx ASC LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM tb_weather ORDER BY wh_idx DESC LIMIT 1", nativeQuery = true)
     List<Weather> getWeather();
 
 }
